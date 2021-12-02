@@ -28,6 +28,12 @@ $ flask run
 
 Access it on [localhost](localhost:5000)
 
+## Test Setup
+
+To setup a debug environment run the following
+```
+$ flask setup-debug
+```
 
 ## Add New Dependencies
 
