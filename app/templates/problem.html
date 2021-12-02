@@ -9,4 +9,23 @@
 {% if is_admin(current_user) %}
 <p>Answer: {{ problem.answer }}</p>
 {% endif %}
+
+<form action="" method="post">
+  {{ form.hidden_tag() }}
+  <p>
+    {{ form.answer.label }}<br>
+    {{ form.answer(size=32) }}<br>
+    {% for error in form.answer.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>{{ form.submit() }}</p>
+</form>
+
+<p>Submissions list</p>
+<ul>
+  {% for submission in submissions %}
+  <li>On {{ moment(submission.timestamp).format('LLL') }}: {{ submission.value }} was {{ submission.result_str() }}</li>
+  {% endfor %}
+</ul>
 {% endblock %}

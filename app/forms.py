@@ -38,3 +38,7 @@ class NewProblemForm(FlaskForm):
   statement = TextAreaField('Statement', validators=[Length(min=0, max=400)])
   answer = IntegerField('Answer', validators=[DataRequired()])
   submit = SubmitField('Create Contest')
+
+class SubmitProblemForm(FlaskForm):
+  answer = IntegerField('Answer', validators=[DataRequired()])
+  submit = SubmitField('Submit Answer')

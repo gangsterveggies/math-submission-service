@@ -2,8 +2,8 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, NewContestForm, NewProblemForm
-from app.models import User, AccountType, Contest, Problem
+from app.forms import LoginForm, RegistrationForm, NewContestForm, NewProblemForm, SubmitProblemForm
+from app.models import User, AccountType, Contest, Problem, Submission
 from app.helpers import admin_required
 from datetime import datetime
 
@@ -75,11 +75,20 @@ def contest(contest_id):
   contest = Contest.query.filter_by(id=contest_id).first_or_404()
   return render_template('contest.html', contest=contest)
 
-@app.route('/problem/<problem_id>')
+@app.route('/problem/<problem_id>', methods=['GET', 'POST'])
 @login_required
 def problem(problem_id):
   problem = Problem.query.filter_by(id=problem_id).first_or_404()
-  return render_template('problem.html', problem=problem)
+  form = SubmitProblemForm()
+  if form.validate_on_submit():
+    submission = Submission(problem=problem, user=current_user, answer=form.answer.data)
+    submission.check_answer(int(form.answer.data))
+    db.session.add(submission)
+    db.session.commit()
+    flash(submission.result_str() + '!')
+    return redirect(url_for('problem', problem_id=problem.id))
+  submissions = current_user.problem_submissions(problem)
+  return render_template('problem.html', problem=problem, submissions=submissions, form=form)
 
 @app.route('/new_contest', methods=['GET', 'POST'])
 @admin_required

@@ -6,9 +6,9 @@
 <p>Last seen on: {{ user.last_seen }}</p>
 {% endif %}
 <hr>
-{% for post in posts %}
+{% for submission in user.submissions %}
 <p>
-  {{ post.author.username }} says: <b>{{ post.body }}</b>
+  {{ submission.problem.title }}: {{ submission.result_str() }}
 </p>
 {% endfor %}
 {% endblock %}
