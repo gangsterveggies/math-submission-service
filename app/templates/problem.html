@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ problem.title }}</h1>
+<p>Back to <a href="{{ url_for('contest', contest_id=problem.contest.id) }}">contest</a></p>
+
+<p>{{ problem.statement }}</p>
+
+{% if is_admin(current_user) %}
+<p>Answer: {{ problem.answer }}</p>
+{% endif %}
+{% endblock %}

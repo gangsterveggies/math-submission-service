@@ -6,6 +6,8 @@
     {% else %}
     <title>PAMC Contest Server</title>
     {% endif %}
+
+    {{ moment.include_moment() }}
   </head>
   <body>
     <div>
@@ -16,6 +18,9 @@
       {% else %}
       <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
       <a href="{{ url_for('logout') }}">Logout</a>
+      {% endif %}
+      {% if is_admin(current_user) %}
+      <a href="{{ url_for('new_contest') }}">New Contest</a>
       {% endif %}
     </div>
     <hr>

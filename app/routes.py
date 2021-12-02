@@ -2,8 +2,9 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
-from app.models import User, AccountType
+from app.forms import LoginForm, RegistrationForm, NewContestForm, NewProblemForm
+from app.models import User, AccountType, Contest, Problem
+from app.helpers import admin_required
 from datetime import datetime
 
 @app.before_request
@@ -15,7 +16,8 @@ def before_request():
 @app.route('/')
 @app.route('/index')
 def index():
-  return render_template('index.html', title='Home')
+  contests = Contest.query.all()
+  return render_template('index.html', contests=contests)
 
 ###
 # Users
@@ -62,3 +64,45 @@ def register():
 def user(username):
   user = User.query.filter_by(username=username).first_or_404()
   return render_template('user.html', user=user)
+
+###
+# Contests
+###
+
+@app.route('/contest/<contest_id>')
+@login_required
+def contest(contest_id):
+  contest = Contest.query.filter_by(id=contest_id).first_or_404()
+  return render_template('contest.html', contest=contest)
+
+@app.route('/problem/<problem_id>')
+@login_required
+def problem(problem_id):
+  problem = Problem.query.filter_by(id=problem_id).first_or_404()
+  return render_template('problem.html', problem=problem)
+
+@app.route('/new_contest', methods=['GET', 'POST'])
+@admin_required
+def new_contest():
+  form = NewContestForm()
+  if form.validate_on_submit():
+    contest = Contest(title=form.title.data, start_date=form.start_date.data, end_date=form.end_date.data)
+    db.session.add(contest)
+    db.session.commit()
+    flash('Contest created')
+    return redirect(url_for('contest', contest_id=contest.id))
+  return render_template('new_contest.html', title='Create Contest', form=form)
+
+@app.route('/contest/<contest_id>/new_problem', methods=['GET', 'POST'])
+@admin_required
+def new_problem(contest_id):
+  contest = Contest.query.filter_by(id=contest_id).first_or_404()
+  form = NewProblemForm()
+  if form.validate_on_submit():
+    problem = Problem(title=form.title.data, statement=form.statement.data, answer=form.answer.data, contest=contest)
+    db.session.add(problem)
+    db.session.commit()
+    flash('Problem created')
+    return redirect(url_for('problem', problem_id=problem.id))
+  return render_template('new_problem.html', title='New Contest', form=form)
+

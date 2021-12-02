@@ -32,6 +32,10 @@ class User(UserMixin, db.Model):
   def check_password(self, password):
     return check_password_hash(self.password_hash, password)
 
+  @staticmethod
+  def is_admin(u):
+    return u.is_authenticated and u.account_type == AccountType.admin
+
   def __repr__(self):
     return '<User {}>'.format(self.username)
 
@@ -49,6 +53,8 @@ class Contest(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   title = db.Column(db.String(50))
   problems = db.relationship('Problem', backref='contest', lazy='dynamic')
+  start_date = db.Column(db.DateTime)
+  end_date = db.Column(db.DateTime)
 
   def __repr__(self):
     return '<Contest {}>'.format(self.title)

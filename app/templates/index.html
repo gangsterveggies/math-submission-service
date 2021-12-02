@@ -2,4 +2,9 @@
 
 {% block content %}
 <h1>Contest List</h1>
+<ul>
+  {% for contest in contests %}
+  <li><a href="{{ url_for('contest', contest_id=contest.id) }}">{{ contest.title }}</a>: from {{ moment(contest.start_date).format('LLL') }} to {{ moment(contest.end_date).format('LLL') }}</li>
+  {% endfor %}
+</ul>
 {% endblock %}

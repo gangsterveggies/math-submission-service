@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ contest.title }}</h1>
+
+{% if is_admin(current_user) %}
+<p><a href="{{ url_for('new_problem', contest_id=contest.id) }}">New Problem</a></p>
+{% endif %}
+
+<p>Problem list</p>
+
+<ul>
+  {% for problem in contest.problems %}
+  <li><a href="{{ url_for('problem', problem_id=problem.id) }}">{{ problem.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

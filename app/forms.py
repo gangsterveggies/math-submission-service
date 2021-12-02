@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateTimeField, TextAreaField, IntegerField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import User
 
 class LoginForm(FlaskForm):
@@ -26,3 +26,15 @@ class RegistrationForm(FlaskForm):
     user = User.query.filter_by(email=email.data).first()
     if user is not None:
       raise ValidationError('Please use a different email address.')
+
+class NewContestForm(FlaskForm):
+  title = StringField('Title', validators=[DataRequired()])
+  start_date = DateTimeField('Start Date', validators=[DataRequired()])
+  end_date = DateTimeField('End Date', validators=[DataRequired()])
+  submit = SubmitField('Create Contest')
+
+class NewProblemForm(FlaskForm):
+  title = StringField('Title', validators=[DataRequired()])
+  statement = TextAreaField('Statement', validators=[Length(min=0, max=400)])
+  answer = IntegerField('Answer', validators=[DataRequired()])
+  submit = SubmitField('Create Contest')
